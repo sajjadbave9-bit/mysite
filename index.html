@@ -2,45 +2,34 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>سایت من</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: white;
-      text-align: center;
-      padding: 50px;
-    }
-
-    .box {
-      background: #222;
-      padding: 30px;
-      border-radius: 20px;
-      max-width: 400px;
-      margin: auto;
-    }
-
-    button {
-      background: #00c853;
-      color: white;
-      border: none;
-      padding: 12px 25px;
-      border-radius: 10px;
-      font-size: 18px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>بازار سجاد</title>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="box">
-  <h1>سلام 👋</h1>
-  <h2>سایت من آنلاین شد 🚀</h2>
-  <p>ساخته شده با GitHub Pages</p>
-  <button>شروع</button>
-</div>
+<header>
+    <h1>🛒 بازار سجاد</h1>
+    <p>خرید و فروش آسان</p>
+</header>
+
+<section class="add">
+    <h2>ثبت آگهی جدید</h2>
+
+    <input id="title" placeholder="نام کالا">
+    <input id="price" placeholder="قیمت">
+    <textarea id="desc" placeholder="توضیحات کالا"></textarea>
+
+    <button onclick="addAd()">ثبت آگهی</button>
+</section>
+
+<section>
+    <h2>آگهی‌ها</h2>
+    <div id="ads"></div>
+</section>
+
+<script src="app.js"></script>
 
 </body>
 </html>
