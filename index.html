@@ -1,42 +1,49 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+
 <head>
 <meta charset="UTF-8">
-<title>بازار سجاد</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🛒 بازار سجاد</title>
+
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <header>
-    <h1>🛒 بازار سجاد</h1>
-    <p>خرید و فروش آسان</p>
+<h1>🛒 بازار سجاد</h1>
+<p>خرید و فروش آنلاین</p>
 </header>
 
-<section>
-    <h2>ثبت آگهی جدید</h2>
+<div class="container">
 
-    <input id="title" placeholder="نام کالا">
+<h2>ثبت آگهی</h2>
 
-    <input id="price" placeholder="قیمت">
+<input type="text" id="title" placeholder="نام کالا">
 
-    <textarea id="desc" placeholder="توضیحات کالا"></textarea>
+<input type="number" id="price" placeholder="قیمت">
 
-    <input id="phone" placeholder="شماره تماس">
+<textarea id="desc" placeholder="توضیحات کالا"></textarea>
 
-    <input id="address" placeholder="آدرس (اختیاری)">
+<input type="text" id="phone" placeholder="شماره تماس">
 
-    <input id="city" placeholder="شهر (مثلاً اهواز)">
+<input type="text" id="city" placeholder="شهر">
 
-    <button onclick="addAd()">ثبت آگهی</button>
-</section>
+<input type="text" id="address" placeholder="آدرس (اختیاری)">
 
+<label>📷 عکس محصول</label>
+<input type="file" id="image" accept="image/*">
 
-<section>
-    <h2>آگهی‌ها</h2>
-    <div id="ads"></div>
-</section>
+<button onclick="addAd()">ثبت آگهی</button>
 
+<hr>
+
+<h2>آگهی‌ها</h2>
+
+<div id="ads"></div>
+
+</div>
 
 <script src="app.js"></script>
 
