@@ -3,18 +3,21 @@ import { db } from "./firebase.js";
 import {
   collection,
   addDoc,
-  getDocs
+  getDocs,
+  deleteDoc,
+  updateDoc,
+  doc
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 
 async function addAd(){
 
-  const title = document.getElementById("title").value;
-  const price = document.getElementById("price").value;
-  const desc = document.getElementById("desc").value;
-  const phone = document.getElementById("phone").value;
-  const city = document.getElementById("city").value;
-  const address = document.getElementById("address").value;
+  let title = document.getElementById("title").value;
+  let price = document.getElementById("price").value;
+  let desc = document.getElementById("desc").value;
+  let phone = document.getElementById("phone").value;
+  let city = document.getElementById("city").value;
+  let address = document.getElementById("address").value;
 
 
   if(title === "" || price === ""){
@@ -24,40 +27,40 @@ async function addAd(){
 
 
   await addDoc(collection(db,"ads"),{
-    title: title,
-    price: price,
-    desc: desc,
-    phone: phone,
-    city: city,
-    address: address,
-    time: new Date().toLocaleString("fa-IR")
+
+    title,
+    price,
+    desc,
+    phone,
+    city,
+    address,
+    sold:false,
+    time:new Date().toLocaleString("fa-IR")
+
   });
 
 
   alert("آگهی ثبت شد");
 
-  loadAds();
+  showAds();
 
 }
 
 
 
-async function loadAds(){
+async function showAds(){
 
-  const box = document.getElementById("ads");
-
-  if(!box) return;
-
+  let box = document.getElementById("ads");
 
   box.innerHTML = "";
 
 
-  const snapshot = await getDocs(collection(db,"ads"));
+  let result = await getDocs(collection(db,"ads"));
 
 
-  snapshot.forEach((item)=>{
+  result.forEach((item)=>{
 
-    const ad = item.data();
+    let ad = item.data();
 
 
     box.innerHTML += `
@@ -66,7 +69,7 @@ async function loadAds(){
 
     <h3>${ad.title}</h3>
 
-    <p>💰 ${ad.price} تومان</p>
+    <p>💰 قیمت: ${Number(ad.price).toLocaleString("fa-IR")} تومان</p>
 
     <p>${ad.desc}</p>
 
@@ -78,6 +81,19 @@ async function loadAds(){
 
     <p>🕒 ${ad.time}</p>
 
+    ${
+      ad.sold
+      ? "<h3>✅ فروخته شد</h3>"
+      :
+      `<button onclick="soldAd('${item.id}')">✅ فروختم</button>`
+    }
+
+    <button onclick="deleteAd('${item.id}')">
+    🗑 حذف آگهی
+    </button>
+
+    <hr>
+
     </div>
 
     `;
@@ -88,7 +104,38 @@ async function loadAds(){
 
 
 
+async function deleteAd(id){
+
+  await deleteDoc(doc(db,"ads",id));
+
+  alert("آگهی حذف شد");
+
+  showAds();
+
+}
+
+
+
+async function soldAd(id){
+
+  await updateDoc(doc(db,"ads",id),{
+
+    sold:true
+
+  });
+
+
+  alert("فروخته شد");
+
+  showAds();
+
+}
+
+
+
 window.addAd = addAd;
+window.deleteAd = deleteAd;
+window.soldAd = soldAd;
 
 
-loadAds();
+showAds();
