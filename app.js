@@ -1,90 +1,172 @@
-let ads = JSON.parse(localStorage.getItem("ads")) || [];
+import { db } from "./firebase.js";
 
-function addAd() {
+import {
+collection,
+addDoc,
+getDocs,
+updateDoc,
+doc
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-    let title = document.getElementById("title").value;
-    let price = document.getElementById("price").value;
-    let desc = document.getElementById("desc").value;
-    let phone = document.getElementById("phone").value;
-    let city = document.getElementById("city").value;
-    let address = document.getElementById("address").value;
+let ads = [];
 
-    if(title == "" || price == ""){
-        alert("نام کالا و قیمت را وارد کن");
-        return;
-    }
+async function addAd() {
 
-    let ad = {
-        title,
-        price,
-        desc,
-        phone,
-        city,
-        address,
-        sold:false,
-        time:new Date().toLocaleString("fa-IR")
-    };
+let title = document.getElementById("title").value;
+let price = document.getElementById("price").value;
+let desc = document.getElementById("desc").value;
+let phone = document.getElementById("phone").value;
+let city = document.getElementById("city").value;
+let address = document.getElementById("address").value;
+let imageFile = document.getElementById("image").files[0];
 
-    ads.push(ad);
+if(title=="" || price==""){
+alert("نام کالا و قیمت را وارد کن");
+return;
+}
 
-    localStorage.setItem("ads", JSON.stringify(ads));
+let image="";
 
-    showAds();
+if(imageFile){
+
+const reader=new FileReader();
+
+reader.onload=async function(){
+
+image=reader.result;
+
+await addDoc(collection(db,"ads"),{
+
+title,
+price,
+desc,
+phone,
+city,
+address,
+image,
+sold:false,
+time:new Date().toLocaleString("fa-IR")
+
+});
+
+loadAds();
+
+};
+
+reader.readAsDataURL(imageFile);
+
+return;
+
+}
+
+await addDoc(collection(db,"ads"),{
+
+title,
+price,
+desc,
+phone,
+city,
+address,
+image:"",
+sold:false,
+time:new Date().toLocaleString("fa-IR")
+
+});
+
+loadAds();
+
+}
+async function loadAds(){
+
+ads=[];
+
+const querySnapshot=await getDocs(collection(db,"ads"));
+
+querySnapshot.forEach((document)=>{
+
+let data=document.data();
+
+ads.push({
+
+id:document.id,
+title:data.title,
+price:data.price,
+desc:data.desc,
+phone:data.phone,
+city:data.city,
+address:data.address,
+image:data.image,
+sold:data.sold,
+time:data.time
+
+});
+
+});
+
+showAds();
+
 }
 
 
-function soldAd(index){
 
-    ads[index].sold = true;
+async function soldAd(id){
 
-    localStorage.setItem("ads", JSON.stringify(ads));
+await updateDoc(doc(db,"ads",id),{
 
-    showAds();
+sold:true
+
+});
+
+loadAds();
+
 }
+
 
 
 function showAds(){
 
-    let box = document.getElementById("ads");
+let box=document.getElementById("ads");
 
-    box.innerHTML = "";
+box.innerHTML="";
 
-    ads.forEach((ad,index)=>{
+ads.forEach((ad)=>{
 
-        box.innerHTML += `
+box.innerHTML+=`
 
-        <div class="ad">
+<div class="ad">
 
-            <h3>${ad.title}</h3>
+${ad.image ? `<img src="${ad.image}" width="200">` : ""}
 
-            <p>💰 قیمت: ${ad.price}</p>
+<h3>${ad.title}</h3>
 
-            <p>${ad.desc}</p>
+<p>💰 قیمت: ${Number(ad.price).toLocaleString("fa-IR")} تومان</p>
 
-            <p>📞 ${ad.phone}</p>
+<p>${ad.desc}</p>
 
-            <p>📍 ${ad.city}</p>
+<p>📞 ${ad.phone}</p>
 
-            <p>🏠 ${ad.address}</p>
+<p>📍 ${ad.city}</p>
 
-            <p>🕒 ${ad.time}</p>
+<p>🏠 ${ad.address}</p>
 
+<p>🕒 ${ad.time}</p>
 
-            ${
-            ad.sold
-            ? "<b>✅ فروخته شد</b>"
-            : `<button onclick="soldAd(${index})">فروختم</button>`
-            }
-
-        </div>
-
-        <hr>
-
-        `;
-
-    });
-
+${ad.sold
+? "<h3 style='color:green'>✅ فروخته شد</h3>"
+: `<button onclick="soldAd('${ad.id}')">فروختم</button>`
 }
 
+<hr>
 
-showAds();
+</div>
+
+`;
+
+});
+
+}
+window.addAd = addAd;
+
+window.soldAd = soldAd;
+
+loadAds();
