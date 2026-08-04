@@ -18,60 +18,43 @@
 <p>خرید و فروش آنلاین</p>
 </header>
 
-
 <div class="container">
-
 
 <h2>ثبت آگهی</h2>
 
-
 <input type="text" id="title" placeholder="نام کالا">
 
-
-<input 
-type="number" 
-id="price" 
+<input
+type="number"
+id="price"
 placeholder="قیمت"
 oninput="showPriceText(this.value)">
 
-
 <p id="priceText"></p>
-
 
 <textarea id="desc" placeholder="توضیحات کالا"></textarea>
 
-
 <input type="text" id="phone" placeholder="شماره تماس">
-
 
 <input type="text" id="city" placeholder="شهر">
 
-
 <input type="text" id="address" placeholder="آدرس (اختیاری)">
-
 
 <label>📷 عکس محصول</label>
 
 <input type="file" id="image" accept="image/*">
 
-
 <button onclick="addAd()">ثبت آگهی</button>
-
 
 <hr>
 
-
 <h2>آگهی‌ها</h2>
-
 
 <div id="ads"></div>
 
-
 </div>
 
-
 <script src="app.js"></script>
-
 
 <script>
 
@@ -87,14 +70,12 @@ return;
 
 }
 
-
 document.getElementById("priceText").innerHTML =
 number.toLocaleString("fa-IR") + " تومان";
 
 }
 
 </script>
-
 
 </body>
 </html>
