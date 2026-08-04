@@ -7,36 +7,30 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 
-let ads = [];
-
-
 async function addAd(){
 
-  let title = document.getElementById("title").value;
-  let price = document.getElementById("price").value;
-  let desc = document.getElementById("desc").value;
-  let phone = document.getElementById("phone").value;
-  let city = document.getElementById("city").value;
-  let address = document.getElementById("address").value;
+  const title = document.getElementById("title").value;
+  const price = document.getElementById("price").value;
+  const desc = document.getElementById("desc").value;
+  const phone = document.getElementById("phone").value;
+  const city = document.getElementById("city").value;
+  const address = document.getElementById("address").value;
 
 
-  if(title=="" || price==""){
+  if(title === "" || price === ""){
     alert("نام کالا و قیمت را وارد کن");
     return;
   }
 
 
   await addDoc(collection(db,"ads"),{
-
     title: title,
     price: price,
     desc: desc,
     phone: phone,
     city: city,
     address: address,
-    sold: false,
     time: new Date().toLocaleString("fa-IR")
-
   });
 
 
@@ -50,38 +44,21 @@ async function addAd(){
 
 async function loadAds(){
 
-  ads=[];
+  const box = document.getElementById("ads");
+
+  if(!box) return;
 
 
-  const querySnapshot = await getDocs(collection(db,"ads"));
+  box.innerHTML = "";
 
 
-  querySnapshot.forEach((item)=>{
-
-    ads.push({
-
-      id:item.id,
-      ...item.data()
-
-    });
-
-  });
+  const snapshot = await getDocs(collection(db,"ads"));
 
 
-  showAds();
+  snapshot.forEach((item)=>{
 
-}
+    const ad = item.data();
 
-
-
-function showAds(){
-
-  let box = document.getElementById("ads");
-
-  box.innerHTML="";
-
-
-  ads.forEach((ad)=>{
 
     box.innerHTML += `
 
@@ -89,7 +66,7 @@ function showAds(){
 
     <h3>${ad.title}</h3>
 
-    <p>💰 قیمت: ${Number(ad.price).toLocaleString("fa-IR")} تومان</p>
+    <p>💰 ${ad.price} تومان</p>
 
     <p>${ad.desc}</p>
 
@@ -100,8 +77,6 @@ function showAds(){
     <p>🏠 ${ad.address}</p>
 
     <p>🕒 ${ad.time}</p>
-
-    <hr>
 
     </div>
 
