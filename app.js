@@ -3,9 +3,7 @@ import { db } from "./firebase.js";
 import {
   collection,
   addDoc,
-  getDocs,
-  deleteDoc,
-  doc
+  getDocs
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 
@@ -30,14 +28,14 @@ async function addAd(){
 
   await addDoc(collection(db,"ads"),{
 
-    title,
-    price,
-    desc,
-    phone,
-    city,
-    address,
-    sold:false,
-    time:new Date().toLocaleString("fa-IR")
+    title: title,
+    price: price,
+    desc: desc,
+    phone: phone,
+    city: city,
+    address: address,
+    sold: false,
+    time: new Date().toLocaleString("fa-IR")
 
   });
 
@@ -60,13 +58,10 @@ async function loadAds(){
 
   querySnapshot.forEach((item)=>{
 
-    let data=item.data();
-
-
     ads.push({
 
       id:item.id,
-      ...data
+      ...item.data()
 
     });
 
@@ -79,36 +74,14 @@ async function loadAds(){
 
 
 
-
-async function deleteAd(id){
-
-  let answer = confirm("حذف شود؟");
-
-  if(!answer) return;
-
-
-  await deleteDoc(doc(db,"ads",id));
-
-
-  alert("آگهی حذف شد");
-
-
-  loadAds();
-
-}
-
-
-
-
 function showAds(){
 
-  let box=document.getElementById("ads");
+  let box = document.getElementById("ads");
 
   box.innerHTML="";
 
 
   ads.forEach((ad)=>{
-
 
     box.innerHTML += `
 
@@ -116,7 +89,7 @@ function showAds(){
 
     <h3>${ad.title}</h3>
 
-    <p>💰 ${Number(ad.price).toLocaleString("fa-IR")} تومان</p>
+    <p>💰 قیمت: ${Number(ad.price).toLocaleString("fa-IR")} تومان</p>
 
     <p>${ad.desc}</p>
 
@@ -128,28 +101,19 @@ function showAds(){
 
     <p>🕒 ${ad.time}</p>
 
-
-    <button onclick="deleteAd('${ad.id}')">
-    🗑 حذف آگهی
-    </button>
-
-
     <hr>
 
     </div>
 
     `;
 
-
   });
-
 
 }
 
 
 
 window.addAd = addAd;
-window.deleteAd = deleteAd;
 
 
 loadAds();
