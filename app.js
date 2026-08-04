@@ -1,110 +1,127 @@
 import { db } from "./firebase.js";
 
 import {
-collection,
-addDoc,
-getDocs,
-updateDoc,
-doc
+  collection,
+  addDoc,
+  getDocs,
+  updateDoc,
+  doc
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
 
 let ads = [];
 
+
 async function addAd() {
 
-let title = document.getElementById("title").value;
-let price = document.getElementById("price").value;
-let desc = document.getElementById("desc").value;
-let phone = document.getElementById("phone").value;
-let city = document.getElementById("city").value;
-let address = document.getElementById("address").value;
-let imageFile = document.getElementById("image").files[0];
+  let title = document.getElementById("title").value;
+  let price = document.getElementById("price").value;
+  let desc = document.getElementById("desc").value;
+  let phone = document.getElementById("phone").value;
+  let city = document.getElementById("city").value;
+  let address = document.getElementById("address").value;
+  let imageFile = document.getElementById("image").files[0];
 
-if(title=="" || price==""){
-alert("نام کالا و قیمت را وارد کن");
-return;
-}
 
-let image="";
+  if(title == "" || price == ""){
+    alert("نام کالا و قیمت را وارد کن");
+    return;
+  }
 
-if(imageFile){
 
-const reader=new FileReader();
+  let image = "";
 
-reader.onload=async function(){
 
-image=reader.result;
+  if(imageFile){
 
-try {
-await addDoc(collection(db,"ads"),{
+    const reader = new FileReader();
 
-title,
-price,
-desc,
-phone,
-city,
-address,
-image,
-sold:false,
-time:new Date().toLocaleString("fa-IR")
+    reader.onload = async function(){
 
-});
+      image = reader.result;
 
-loadAds();
+      await saveAd(image);
 
-};
+    };
 
-reader.readAsDataURL(imageFile);
+    reader.readAsDataURL(imageFile);
 
-return;
+  } else {
+
+    await saveAd("");
+
+  }
+
 
 }
 
-await addDoc(collection(db,"ads"),{
 
-title,
-price,
-desc,
-phone,
-city,
-address,
-image:"",
-sold:false,
-time:new Date().toLocaleString("fa-IR")
+async function saveAd(image){
 
-});
+  let title = document.getElementById("title").value;
+  let price = document.getElementById("price").value;
+  let desc = document.getElementById("desc").value;
+  let phone = document.getElementById("phone").value;
+  let city = document.getElementById("city").value;
+  let address = document.getElementById("address").value;
 
-loadAds();
+
+  await addDoc(collection(db,"ads"),{
+
+    title,
+    price,
+    desc,
+    phone,
+    city,
+    address,
+    image,
+    sold:false,
+    time:new Date().toLocaleString("fa-IR")
+
+  });
+
+
+  alert("آگهی ثبت شد");
+
+  loadAds();
 
 }
+
+
+
 async function loadAds(){
 
-ads=[];
+  ads = [];
 
-const querySnapshot=await getDocs(collection(db,"ads"));
 
-querySnapshot.forEach((document)=>{
+  const querySnapshot = await getDocs(collection(db,"ads"));
 
-let data=document.data();
 
-ads.push({
+  querySnapshot.forEach((document)=>{
 
-id:document.id,
-title:data.title,
-price:data.price,
-desc:data.desc,
-phone:data.phone,
-city:data.city,
-address:data.address,
-image:data.image,
-sold:data.sold,
-time:data.time
+    let data = document.data();
 
-});
 
-});
+    ads.push({
 
-showAds();
+      id: document.id,
+      title:data.title,
+      price:data.price,
+      desc:data.desc,
+      phone:data.phone,
+      city:data.city,
+      address:data.address,
+      image:data.image,
+      sold:data.sold,
+      time:data.time
+
+    });
+
+
+  });
+
+
+  showAds();
 
 }
 
@@ -112,13 +129,14 @@ showAds();
 
 async function soldAd(id){
 
-await updateDoc(doc(db,"ads",id),{
+  await updateDoc(doc(db,"ads",id),{
 
-sold:true
+    sold:true
 
-});
+  });
 
-loadAds();
+
+  loadAds();
 
 }
 
@@ -126,48 +144,58 @@ loadAds();
 
 function showAds(){
 
-let box=document.getElementById("ads");
+  let box = document.getElementById("ads");
 
-box.innerHTML="";
+  box.innerHTML = "";
 
-ads.forEach((ad)=>{
 
-box.innerHTML+=`
+  ads.forEach((ad)=>{
 
-<div class="ad">
 
-${ad.image ? `<img src="${ad.image}" width="200">` : ""}
+    box.innerHTML += `
 
-<h3>${ad.title}</h3>
+    <div class="ad">
 
-<p>💰 قیمت: ${Number(ad.price).toLocaleString("fa-IR")} تومان</p>
+    ${ad.image ? `<img src="${ad.image}" width="200">` : ""}
 
-<p>${ad.desc}</p>
+    <h3>${ad.title}</h3>
 
-<p>📞 ${ad.phone}</p>
+    <p>💰 قیمت: ${Number(ad.price).toLocaleString("fa-IR")} تومان</p>
 
-<p>📍 ${ad.city}</p>
+    <p>${ad.desc}</p>
 
-<p>🏠 ${ad.address}</p>
+    <p>📞 ${ad.phone}</p>
 
-<p>🕒 ${ad.time}</p>
+    <p>📍 ${ad.city}</p>
 
-${ad.sold
-? "<h3 style='color:green'>✅ فروخته شد</h3>"
-: `<button onclick="soldAd('${ad.id}')">فروختم</button>`
+    <p>🏠 ${ad.address}</p>
+
+    <p>🕒 ${ad.time}</p>
+
+
+    ${
+      ad.sold
+      ? "<h3>✅ فروخته شد</h3>"
+      : `<button onclick="soldAd('${ad.id}')">فروختم</button>`
+    }
+
+
+    <hr>
+
+    </div>
+
+    `;
+
+
+  });
+
+
 }
 
-<hr>
 
-</div>
 
-`;
-
-});
-console.log("app.js loaded");
-}
 window.addAd = addAd;
-
 window.soldAd = soldAd;
+
 
 loadAds();
