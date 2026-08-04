@@ -163,7 +163,7 @@ ${ad.sold
 `;
 
 });
-
+console.log("app.js loaded");
 }
 window.addAd = addAd;
 
