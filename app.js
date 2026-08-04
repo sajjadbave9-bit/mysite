@@ -35,6 +35,7 @@ reader.onload=async function(){
 
 image=reader.result;
 
+try {
 await addDoc(collection(db,"ads"),{
 
 title,
